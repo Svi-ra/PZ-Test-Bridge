@@ -1,0 +1,14 @@
+# Copy this file to gradle.properties (which git ignores) and set the paths for your machine.
+# Any of these can also be passed as -P<name>=<value>.
+
+# A JDK 25 to run Gradle and compile (the game runs Java 25). Remove if JAVA_HOME already points to a JDK 25.
+org.gradle.java.home=C:/Program Files/JetBrains/IntelliJ IDEA/jbr
+
+# Project Zomboid install (compile-only: projectzomboid.jar).
+pzInstallDir=C:/Program Files (x86)/Steam/steamapps/common/ProjectZomboid
+# ZombieBuddy API jar (compile-only). Workshop item 3619862853.
+zombieBuddyJar=C:/Program Files (x86)/Steam/steamapps/workshop/content/108600/3619862853/mods/ZombieBuddy/libs/ZombieBuddy.jar
+# Where deployMod writes the mod folder (<modsDir>/TestBridge).
+modsDir=C:/Users/<you>/Zomboid/mods
+
+org.gradle.caching=true

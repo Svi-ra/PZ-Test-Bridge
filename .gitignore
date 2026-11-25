@@ -1,0 +1,8 @@
+.gradle/
+build/
+out/
+*.class
+.idea/
+*.iml
+# machine-specific build paths (template: gradle.properties.example)
+gradle.properties

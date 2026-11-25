@@ -1,0 +1,69 @@
+// Test Bridge: a development-only Project Zomboid mod that lets automated tests drive the game through a command file.
+// The game runs on Java 25, so everything targets release 25. The game jar and ZombieBuddy.jar are compile-only.
+
+plugins {
+    id 'java'
+}
+
+group = 'pzmod.testbridge'
+version = '1.0.0'
+
+def pzInstallDir = file(project.findProperty('pzInstallDir') ?: 'D:/Program Files/Steam/steamapps/common/ProjectZomboid')
+def zombieBuddyJar = file(project.findProperty('zombieBuddyJar') ?: "${pzInstallDir}/ZombieBuddy.jar")
+def modsDir = file(project.findProperty('modsDir') ?: "${System.getProperty('user.home')}/Zomboid/mods")
+def modId = 'TestBridge'
+def gameJar = "${pzInstallDir}/projectzomboid.jar"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly files(gameJar)
+    compileOnly files(zombieBuddyJar)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.encoding = 'UTF-8'
+    // game jars are not modules; silence the "classfile" lint about their attributes
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-classfile', '-Werror']
+}
+
+tasks.named('compileJava', JavaCompile) {
+    doFirst {
+        if (!file(gameJar).exists()) throw new GradleException("projectzomboid.jar not found under pzInstallDir=${pzInstallDir} (see gradle.properties)")
+        if (!zombieBuddyJar.exists()) throw new GradleException("ZombieBuddy.jar not found at zombieBuddyJar=${zombieBuddyJar} (see gradle.properties)")
+    }
+}
+
+jar {
+    archiveFileName = "${modId}.jar"
+    manifest {
+        attributes('Implementation-Title': modId, 'Implementation-Version': project.version)
+    }
+}
+
+// Assembles the clean mod folder in build/mod/${modId} (no sources, no build files).
+tasks.register('assembleMod', Sync) {
+    description = "Builds the mod folder (mod.info, media, jar) under build/mod/${modId}."
+    group = 'build'
+    dependsOn tasks.named('jar')
+    into layout.buildDirectory.dir("mod/${modId}")
+    from(file('mod')) {
+        exclude '**/.gitkeep'
+    }
+    from(tasks.named('jar')) {
+        into '42/media/java/client'
+    }
+}
+
+// Copies the assembled folder into the game's mods directory. Sync only touches <modsDir>/${modId}.
+// Never run it while the game is running (classes not loaded yet would fail with NoClassDefFoundError).
+tasks.register('deployMod', Sync) {
+    description = "Copies the mod folder to ${modsDir}/${modId}."
+    group = 'distribution'
+    dependsOn tasks.named('assembleMod')
+    from layout.buildDirectory.dir("mod/${modId}")
+    into new File(modsDir, modId)
+}

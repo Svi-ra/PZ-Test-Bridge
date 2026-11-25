@@ -1,0 +1,10 @@
+name=Test Bridge (automated testing, development only)
+id=TestBridge
+author=Svi-ra
+modversion=1.0.0
+versionMin=42.22
+description=Development tool, not for play. Lets automated tests drive the game through a command file in the Zomboid user folder (testbridge/command.txt): run Lua like the debug console, move the character, pan and zoom the camera, read and click the UI, take screenshots with UI. Does nothing unless a command file appears. Needs ZombieBuddy (Java mods).
+require=\ZombieBuddy
+javaJarFile=media/java/client/TestBridge.jar
+javaPkgName=pzmod.testbridge
+ZBVersionMin=2.3.4
