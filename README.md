@@ -51,3 +51,7 @@ ZombieBuddy asks at start-up to approve the new jar.
 
 The command file runs arbitrary Lua with the game's permissions. Only the local user (and tools they run) can write to
 the Zomboid user folder, but do not leave the mod enabled in saves you play, and never ship it.
+
+## License
+
+MIT (see `LICENSE`). The Gradle wrapper files are Gradle's own (Apache 2.0).
